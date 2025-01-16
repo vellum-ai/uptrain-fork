@@ -2,11 +2,11 @@
 requires = ["setuptools", "wheel"]
 
 [project]
-name = "uptrain"
-version = "0.7.1"
-description = "UpTrain - tool to evaluate LLM applications on aspects like factual accuracy, response quality, retrieval quality, tonality, etc."
+name = "vellum-uptrain-fork"
+version = "0.7.2"
+description = "Vellum UpTrain Fork"
 readme = "README.md"
-maintainers = [{ name = "UpTrain AI Team", email = "oss@uptrain.ai" }]
+maintainers = [{ name = "Vellum AI", email = "devops@vellum.ai" }]
 license = {text = "Apache-2.0"}
 classifiers = [
     "Development Status :: 5 - Production/Stable",

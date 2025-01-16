@@ -1,6 +1,6 @@
 """
 This module implements a simple LLM wrapper that can be used to evaluate performance
-of LLM applications. 
+of LLM applications.
 """
 
 import typing as t
@@ -211,7 +211,7 @@ class EvalLLM:
         """
         if evaluation_name is None:
             evaluation_name = "Eval - " + str(datetime.utcnow())
-        
+
         if isinstance(data, pl.DataFrame):
             data = data.to_dicts()
         elif isinstance(data, pd.DataFrame):
@@ -349,40 +349,7 @@ class EvalLLM:
                     results[idx].update(row)
         else:
             results = self.evaluate_on_server(data, ser_checks, schema)
-        ## local server calls
-        try:
-            client = httpx.Client(
-                headers={"uptrain-access-token": "default_key"},
-                timeout=httpx.Timeout(7200, connect=5),
-            )
 
-            sink_data = copy.deepcopy(results)
-            for idx, data_point in enumerate(sink_data):
-                row_uuid= get_uuid()
-                data_point["row_uuid"] = row_uuid
-                for key_dict in list(data_point.keys()):
-                    if "confidence" in key_dict:
-                        data_point['score_confidence' + '_' + key_dict.split("confidence_")[-1]] = data_point[key_dict]
-                    if key_dict.startswith("score") and "confidence" not in key_dict:
-                        data_point["status_" + key_dict] = "not updated"
-
-            url = self.settings.uptrain_local_url + "/api/public/add_project_data"
-            response = client.post(
-                url,
-                json={
-                    "data": data,
-                    "sink_data": sink_data,
-                    "checks": server_checks,
-                    "metadata": metadata,
-                    "schema_dict": schema.model_dump(),
-                    "project": project_name,
-                    "evaluation": evaluation_name,
-                    "exp_column": None if metadata.get("uptrain_experiment_columns", None) is None else metadata.get("uptrain_experiment_columns", None)[0]
-                },
-            )
-        except Exception:
-            #user_id = "default_key"
-            logger.info("Local server not running, start the server to log data and visualize in the dashboard!")
         return results
 
     def evaluate_on_server(self, data, ser_checks, schema):
@@ -441,7 +408,7 @@ class EvalLLM:
             metadata = {}
         if evaluation_name is None:
             evaluation_name = "Expt - " + str(datetime.utcnow())
-        
+
         metadata.update({"uptrain_experiment_columns": exp_columns})
 
         if schema is None:
